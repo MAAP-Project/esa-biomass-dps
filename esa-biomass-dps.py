@@ -11,23 +11,12 @@ import pystac_client
 import rasterio
 import odc.stac
 from odc.geo import GeoBox
+import rioxarray 
 
 bbox = (55, 64, 61, 67)
 bbox_crs = "wgs84"
 resolution = 30
 datetime = "2026-01-01/2026-02-02"
-
-
-# Search the ESA STAC for BiomassLevel1B items that match the spatial and temporal parameters
-client = pystac_client.Client.open("https://catalog.maap.eo.esa.int/catalogue/")
-search = client.search(
-    collections=["BiomassLevel1b"],
-    bbox=bbox,
-    datetime=datetime,
-    filter="productType='S2_DGM__1S'",
-    method="GET"
-)
-items = search.item_collection()
 
 """
 Next, you'll need to obtain a token
@@ -59,9 +48,6 @@ def load_credentials(file_path=CREDENTIALS_FILE):
             key, value = line.split("=", 1)
             creds[key.strip()] = value.strip()
     return creds
-
-
-# --- ESA MAAP API ---
 
 def get_token():
     """Use OFFLINE_TOKEN to fetch a short-lived access token."""
@@ -96,11 +82,49 @@ def get_token():
 
 token = get_token()
 
-# 
+# Search the ESA STAC for BiomassLevel1B items that match the spatial and temporal parameters
+client = pystac_client.Client.open("https://catalog.maap.eo.esa.int/catalogue/")
+search = client.search(
+    collections=["BiomassLevel1b"],
+    bbox=bbox,
+    datetime=datetime,
+    filter="productType='S2_DGM__1S'",
+    method="GET"
+)
+items = search.item_collection()
+
+# Convert results to a list and remove proj information. This is to ensure odc stac works properly.
+item_list = []
+for item in items:
+    item.properties.pop("proj:code", None)
+    item.stac_extensions = [extension for extension in item.stac_extensions if "projection" not in extension]
+    item_list.append(item)
+
+# Retrieve assets, flatten, and save as a COG
+cfg = {
+    "BiomassLevel1b": {
+        "assets": {
+            "enclosure_tiff": {
+                "data_type": "float32",
+                "nodata": float("nan"),
+            },
+        },
+        "*": {"warnings": "ignore"}
+    }
+}
+
 with rasterio.Env(GDAL_HTTP_HEADERS=f"Authorization: Bearer {token}"):
     stack = odc.stac.load(
-         items,
-         bands=["enclosure_tiff"],
-         #chunks={"x": 512, "y": 512},  # TODO: figure out the right settings for this
-         geobox=GeoBox.from_bbox(bbox=bbox, crs=bbox_crs, resolution=resolution, tight=True),
-     ).sortby("time")
+        item_list,
+        bands=["enclosure_tiff"],
+        stac_cfg=cfg,
+        chunks={"x": 512, "y": 512},
+        geobox=GeoBox.from_bbox(bbox=bbox, crs=bbox_crs, resolution=.01, tight=True),
+    ).sortby("time")
+
+    #stack["enclosure_tiff"].resample(time="ME").first().plot.imshow(col="time")
+    #stack["enclosure_tiff"].ffill(dim='time').isel(time=-1).plot.imshow()
+
+    data = stack["enclosure_tiff"].ffill(dim='time').isel(time=-1)
+    data.rio.to_raster("biomass.tiff", driver="COG")
+
