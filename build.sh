@@ -1,11 +1,16 @@
 #!/bin/bash
-set -euo pipefail
+set -e
 
-IMAGE_NAME="esa-biomass-dps"
-IMAGE_TAG="latest"
+echo "Installing ESA BIOMASS DPS dependencies"
 
-echo "Building Docker image: ${IMAGE_NAME}:${IMAGE_TAG}"
+pip install --no-cache-dir \
+    requests \
+    pystac-client \
+    rasterio \
+    odc-stac \
+    odc-geo \
+    rioxarray \
+    xarray \
+    boto3
 
-docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
-
-echo "Build complete: ${IMAGE_NAME}:${IMAGE_TAG}"
+echo "Build complete"
