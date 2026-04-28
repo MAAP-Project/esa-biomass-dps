@@ -1,8 +1,18 @@
-name: python
+name: esa_biomass_dps
 channels:
-  - conda-forge
-  - defaults
+ - conda-forge
 dependencies:
-  - gdal
-  - rasterio 
-  - odc-stac
+ - python=3.11
+ - requests
+ - pystac-client
+ - rasterio
+ - gdal
+ - odc-stac
+ - odc-geo
+ - rioxarray
+ - xarray
+ - dask
+ - numpy
+ - pandas
+ - pyproj
+ - pip
