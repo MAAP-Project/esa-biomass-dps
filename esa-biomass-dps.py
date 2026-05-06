@@ -13,10 +13,10 @@ import odc.stac
 from odc.geo import GeoBox
 import rioxarray 
 
-bbox = (55, 64, 61, 67)
-bbox_crs = "wgs84"
-resolution = 30
-datetime = "2026-01-01/2026-02-02"
+# bbox = (55, 64, 61, 67)
+# bbox_crs = "wgs84"
+# resolution = 30
+# datetime = "2026-01-01/2026-02-02"
 
 """
 Next, you'll need to obtain a token
