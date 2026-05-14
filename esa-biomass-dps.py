@@ -12,6 +12,10 @@ import rasterio
 import odc.stac
 from odc.geo import GeoBox
 import rioxarray 
+import os
+
+from maap.maap import MAAP
+maap = MAAP()
 
 # bbox = (55, 64, 61, 67)
 # bbox_crs = "wgs84"
@@ -31,31 +35,64 @@ Now the following code will retrieve a short-lived token
 """
 
 # Retrieve token
-CREDENTIALS_FILE = (Path.home() / "credentials.txt").resolve()
+# CREDENTIALS_FILE = (Path.home() / "credentials.txt").resolve()
 
-def load_credentials(file_path=CREDENTIALS_FILE):
-    """Read key-value pairs from a credentials file into a dictionary."""
-    creds = {}
-    if not file_path.exists():
-        raise FileNotFoundError(f"Credentials file not found: {file_path}")
-    with open(file_path, "r") as f:
-        for line in f:
-            line = line.strip()
-            if not line or line.startswith("#"):
-                continue
-            if "=" not in line:
-                continue
-            key, value = line.split("=", 1)
-            creds[key.strip()] = value.strip()
-    return creds
+# def load_credentials(file_path=CREDENTIALS_FILE):
+#     """Read key-value pairs from a credentials file into a dictionary."""
+#     creds = {}
+#     if not file_path.exists():
+#         raise FileNotFoundError(f"Credentials file not found: {file_path}")
+#     with open(file_path, "r") as f:
+#         for line in f:
+#             line = line.strip()
+#             if not line or line.startswith("#"):
+#                 continue
+#             if "=" not in line:
+#                 continue
+#             key, value = line.split("=", 1)
+#             creds[key.strip()] = value.strip()
+#     return creds
+
+# def get_token():
+#     """Use OFFLINE_TOKEN to fetch a short-lived access token."""
+#     creds = load_credentials()
+
+#     OFFLINE_TOKEN = creds.get("OFFLINE_TOKEN")
+#     CLIENT_ID = creds.get("CLIENT_ID")
+#     CLIENT_SECRET = creds.get("CLIENT_SECRET")
+
+#     if not all([OFFLINE_TOKEN, CLIENT_ID, CLIENT_SECRET]):
+#         raise ValueError("Missing OFFLINE_TOKEN, CLIENT_ID, or CLIENT_SECRET in credentials file")
+
+#     url = "https://iam.maap.eo.esa.int/realms/esa-maap/protocol/openid-connect/token"
+#     data = {
+#         "client_id": CLIENT_ID,
+#         "client_secret": CLIENT_SECRET,
+#         "grant_type": "refresh_token",
+#         "refresh_token": OFFLINE_TOKEN,
+#         "scope": "offline_access openid"
+#     }
+
+#     response = requests.post(url, data=data)
+#     response.raise_for_status()
+
+#     response_json = response.json()
+#     access_token = response_json.get('access_token')
+
+#     if not access_token:
+#         raise RuntimeError("Failed to retrieve access token from IAM response")
+
+#     return access_token
+
+# token = get_token()
 
 def get_token():
     """Use OFFLINE_TOKEN to fetch a short-lived access token."""
-    creds = load_credentials()
+    #creds = load_credentials()
 
-    OFFLINE_TOKEN = creds.get("OFFLINE_TOKEN")
-    CLIENT_ID = creds.get("CLIENT_ID")
-    CLIENT_SECRET = creds.get("CLIENT_SECRET")
+    OFFLINE_TOKEN = maap.secrets.get_secret("OFFLINE_TOKEN")
+    CLIENT_ID = maap.secrets.get_secret("CLIENT_ID")
+    CLIENT_SECRET = maap.secrets.get_secret("CLIENT_SECRET")
 
     if not all([OFFLINE_TOKEN, CLIENT_ID, CLIENT_SECRET]):
         raise ValueError("Missing OFFLINE_TOKEN, CLIENT_ID, or CLIENT_SECRET in credentials file")
@@ -82,6 +119,7 @@ def get_token():
 
 token = get_token()
 
+
 # Search the ESA STAC for BiomassLevel1B items that match the spatial and temporal parameters
 client = pystac_client.Client.open("https://catalog.maap.eo.esa.int/catalogue/")
 search = client.search(
@@ -99,6 +137,8 @@ for item in items:
     item.properties.pop("proj:code", None)
     item.stac_extensions = [extension for extension in item.stac_extensions if "projection" not in extension]
     item_list.append(item)
+
+os.makedirs("./output", exist_ok=True)
 
 # Retrieve assets, flatten, and save as a COG
 cfg = {
@@ -126,5 +166,5 @@ with rasterio.Env(GDAL_HTTP_HEADERS=f"Authorization: Bearer {token}"):
     #stack["enclosure_tiff"].ffill(dim='time').isel(time=-1).plot.imshow()
 
     data = stack["enclosure_tiff"].ffill(dim='time').isel(time=-1)
-    data.rio.to_raster("biomass.tiff", driver="COG")
+    data.rio.to_raster("./output/biomass.tiff", driver="COG")
 

@@ -9,7 +9,7 @@ python /app/ESA_BIOMASS_DPS_JOB/esa-biomass-dps.py \
   --bbox "${bbox}" \
   --datetime "${datetime}" \
   --resolution "${resolution}" \
-  --out_dir "./output" \
+#  --out_dir "./output" \
   --out_name "biomass.tiff"
 
 echo "Job completed."
