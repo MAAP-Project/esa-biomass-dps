@@ -15,4 +15,5 @@ dependencies:
  - numpy
  - pandas
  - pyproj
- - pip
+ - pip: 
+   - maap-py

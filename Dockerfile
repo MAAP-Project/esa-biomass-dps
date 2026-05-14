@@ -13,4 +13,4 @@ RUN chmod +x run.sh build.sh
 
 SHELL ["conda", "run", "-n", "esa_biomass_dps", "/bin/bash", "-c"]
 
-ENTRYPOINT ["/app/ESA_BIOMASS_DPS_JOB/run.sh"]
+ENTRYPOINT ["conda", "run", "-n", "esa_biomass_dps", "/bin/bash", "/app/ESA_BIOMASS_DPS_JOB/run.sh"]
