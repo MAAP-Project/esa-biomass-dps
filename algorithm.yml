@@ -5,7 +5,7 @@ algorithm_description: "MAAP OGC Application Package that searches ESA BIOMASS L
 
 docker_container_url: esa-biomass-dps:latest
 
-repository_url: https://github.com/HarshiniGirish/ESA_BIOMASS_DPS_JOB
+repository_url: https://github.com/MAAP-Project/esa-biomass-dps
 
 run_command: "/app/ESA_BIOMASS_DPS_JOB/run.sh"
 
