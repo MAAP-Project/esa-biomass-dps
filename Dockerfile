@@ -1,6 +1,6 @@
 FROM condaforge/mambaforge:latest
 
-WORKDIR /app/ESA_BIOMASS_DPS_JOB
+WORKDIR /app/esa-biomass-dps
 
 COPY environment.yml .
 RUN mamba env create -f environment.yml && mamba clean -afy
