@@ -14,6 +14,7 @@ pip install --no-cache-dir \
     rioxarray \
     xarray \
     boto3 \
-    maap-py
+    maap-py \
+    bottleneck
 
 echo "Build complete"
