@@ -13,6 +13,7 @@ import odc.stac
 from odc.geo import GeoBox
 import rioxarray 
 import os
+import argparse
 
 from maap.maap import MAAP
 maap = MAAP()
@@ -21,6 +22,18 @@ maap = MAAP()
 # bbox_crs = "wgs84"
 # resolution = 30
 # datetime = "2026-01-01/2026-02-02"
+
+parser = argparse.ArgumentParser(description="ESA BIOMASS DPS Job")
+parser.add_argument("--bbox", type=str, required=True, help="Bounding box as min_lon,min_lat,max_lon,max_lat")
+parser.add_argument("--datetime", type=str, required=True, help="Datetime range e.g. 2026-01-01/2026-02-02")
+parser.add_argument("--resolution", type=float, default=0.01, help="Output resolution in degrees")
+args = parser.parse_args()
+
+# Parse bbox string into tuple of floats
+bbox = tuple(float(x) for x in args.bbox.split(","))
+bbox_crs = "wgs84"
+datetime = args.datetime
+resolution = args.resolution
 
 """
 Next, you'll need to obtain a token
