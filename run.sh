@@ -5,7 +5,9 @@ echo "Starting ESA BIOMASS DPS job..."
 
 mkdir -p output
 
-python /app/ESA_BIOMASS_DPS_JOB/esa-biomass-dps.py "$@"
+basedir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+
+python "${basedir}/esa-biomass-dps.py" "$@"
 
 echo "Job completed."
 echo "Output files:"
