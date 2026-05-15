@@ -23,7 +23,7 @@ parser = argparse.ArgumentParser(description="ESA BIOMASS DPS Job")
 parser.add_argument("--bbox", type=str, required=True, help="Bounding box as min_lon,min_lat,max_lon,max_lat")
 parser.add_argument("--crs", type=str, required=True, help="CRS of bbox and output")
 parser.add_argument("--datetime", type=str, required=True, help="Datetime range e.g. 2026-01-01/2026-02-02")
-parser.add_argument("--resolution", type=float, default=0.01, help="Output resolution in degrees, eg. 0.1")
+parser.add_argument("--resolution", type=float, default=0.01, help="Output resolution in CRS units, eg. 0.1")
 args = parser.parse_args()
 
 # Parse bbox string into tuple of floats
