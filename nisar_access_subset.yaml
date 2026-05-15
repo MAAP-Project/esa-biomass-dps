@@ -1,8 +1,0 @@
-algorithm:
-  name: nisar_access_subset
-  version: "0.1.0"
-  description: "NISAR GCOV (Beta) access via S3 or HTTPS and small window subset"
-  repository: "https://github.com/HarshiniGirish/NISAR_DPS_JOB"
-  git_ref: "main"
-  dockerfile: "Dockerfile"
-  cwl: "nisar_access_subset.cwl"

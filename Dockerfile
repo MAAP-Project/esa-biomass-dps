@@ -1,19 +1,16 @@
-FROM python:3.11-slim
+FROM condaforge/mambaforge:latest
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    libhdf5-dev \
-    && rm -rf /var/lib/apt/lists/*
+WORKDIR /app/esa-biomass-dps
 
-WORKDIR /app
+COPY environment.yml .
+RUN mamba env create -f environment.yml && mamba clean -afy
 
-COPY requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir -r /app/requirements.txt
+COPY esa-biomass-dps.py .
+COPY run.sh .
+COPY build.sh .
 
-# copy your repo contents into /app
-COPY . /app
+RUN chmod +x run.sh build.sh
 
-# make run.sh executable
-RUN chmod +x /app/run.sh
+SHELL ["conda", "run", "-n", "esa_biomass_dps", "/bin/bash", "-c"]
 
-ENTRYPOINT ["/app/run.sh"]
+ENTRYPOINT ["conda", "run", "-n", "esa_biomass_dps", "/bin/bash", "/app/ESA_BIOMASS_DPS_JOB/run.sh"]
