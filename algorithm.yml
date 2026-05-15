@@ -1,7 +1,7 @@
 algorithm_name: esa_biomass_dps
 algorithm_version: main
 
-algorithm_description: "MAAP OGC Application Package that searches ESA BIOMASS Level 1B data, retrieves token-protected GeoTIFF assets, loads the selected area through STAC/ODC, forward-fills the latest available time slice, and writes the result as a Cloud Optimized GeoTIFF."
+algorithm_description: "MAAP OGC Application Package that searches ESA BIOMASS Level 1B data, retrieves GeoTIFF assets, loads the selected area through STAC/ODC, forward-fills the latest available time slice, and writes the result as a Cloud Optimized GeoTIFF."
 
 docker_container_url: esa-biomass-dps:latest
 
@@ -16,15 +16,21 @@ inputs:
     type: string
     default: "55,64,61,67"
 
+  crs:
+    title: Coordinate Reference System
+    description: "CRS of the output raster"
+    type: string
+    default: "ESPG:4326"
+
   datetime:
     title: Datetime range
-    description: "Datetime range for ESA BIOMASS STAC search"
+    description: "Datetime range"
     type: string
     default: "2026-01-01/2026-02-02"
 
   resolution:
     title: Output resolution
-    description: "Output geobox resolution in degrees when using WGS84"
+    description: "Output resolution"
     type: string
     default: "0.01"
 

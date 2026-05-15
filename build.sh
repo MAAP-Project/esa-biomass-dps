@@ -15,6 +15,7 @@ pip install --no-cache-dir \
     xarray \
     boto3 \
     maap-py \
-    bottleneck
+    bottleneck \
+    pyproj
 
 echo "Build complete"
