@@ -7,13 +7,12 @@ If you're using NASA MAAP, you'll need to obtain a long-term token from ESA.
 For instructions on obtaining a long-term token, see:
 https://docs.maap-project.org/en/latest/science/ESA_BIOMASS/ESA_BIOMASS_Data_Access.html#Getting-the-ESA-MAAP-Long-Lasting-Token
 
-Run the following to add secrets using maap-py:
+Run the following to add your long-term ESA token using maap-py:
 
-CLIENT_ID = maap.secrets.add_secret("CLIENT_ID", "offline-token")
-CLIENT_SECRET = maap.secrets.add_secret("CLIENT_SECRET", "p1eL7uonXs6MDxtGbgKdPVRAmnGxHpVE")
 OFFLINE_TOKEN = maap.secrets.add_secret("OFFLINE_TOKEN", "INSERT YOUR LONG-TERM ESA TOKEN HERE")
 
-The code below will then retrieve a short-lived token.
+The code below will then retrieve a short-lived token using the public
+ESA MAAP client credentials.
 If you're running on ESA MAAP, comment out the token retrieval path.
 """
 
@@ -31,6 +30,8 @@ from pyproj import Transformer
 
 STAC_URL = "https://catalog.maap.eo.esa.int/catalogue/"
 TOKEN_URL = "https://iam.maap.eo.esa.int/realms/esa-maap/protocol/openid-connect/token"
+CLIENT_ID = "offline-token"
+CLIENT_SECRET = "p1eL7uonXs6MDxtGbgKdPVRAmnGxHpVE"
 COLLECTION = "BiomassLevel1b"
 PRODUCT_FILTER = "productType='S2_DGM__1S'"
 
@@ -66,22 +67,19 @@ def parse_args(argv=None):
 
 
 def get_token(maap_client=None):
+    """Exchange the long-lived offline token for a short-lived access token."""
     maap_client = maap_client or MAAP()
 
     offline_token = maap_client.secrets.get_secret("OFFLINE_TOKEN")
-    client_id = maap_client.secrets.get_secret("CLIENT_ID")
-    client_secret = maap_client.secrets.get_secret("CLIENT_SECRET")
 
-    if not all([offline_token, client_id, client_secret]):
-        raise ValueError(
-            "Missing OFFLINE_TOKEN, CLIENT_ID, or CLIENT_SECRET in credentials file"
-        )
+    if not offline_token:
+        raise ValueError("Missing OFFLINE_TOKEN in credentials file")
 
     response = requests.post(
         TOKEN_URL,
         data={
-            "client_id": client_id,
-            "client_secret": client_secret,
+            "client_id": CLIENT_ID,
+            "client_secret": CLIENT_SECRET,
             "grant_type": "refresh_token",
             "refresh_token": offline_token,
             "scope": "offline_access openid",
