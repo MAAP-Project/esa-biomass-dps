@@ -7,7 +7,8 @@ A MAAP DPS/OGC Application Package that queries the ESA BIOMASS Level 1B collect
 - `environment.yml` is the canonical dependency manifest.
 - `build.sh` creates or updates the `esa_biomass_dps` conda environment from `environment.yml`.
 - `run.sh` is the MAAP/DPS runtime wrapper and invokes `run.py`.
-- `run.sh` currently hard-codes the output path to `output/biomass.tif` and passes it to Python via `--output-path`.
+- `run.sh` writes the output COG to `./output/biomass.tif` in the current working directory and passes that path to Python via `--output-path`.
+- `esa-biomass-dps.cwl` defines the CWL workflow and command-line tool wrapper for the package.
 
 ## CLI arguments
 
