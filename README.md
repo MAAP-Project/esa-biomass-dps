@@ -2,6 +2,26 @@
 
 A MAAP DPS/OGC Application Package that queries the ESA BIOMASS Level 1B collection in ESA STAC for data within a user-defined bounding box and time range, retrieves the granules, and loads the assets using odc-stac. The data is optionally forward-filled over time and reduced to the latest available observation, then written as a Cloud Optimized GeoTIFF (COG) in the user-specified CRS and resolution.
 
+## Authentication
+
+`run.py` contains the public ESA MAAP OAuth client values (`client_id` and
+`client_secret`) and only expects the user-specific `OFFLINE_TOKEN` to be
+configured as a MAAP secret.
+
+Example:
+
+```python
+from maap.maap import MAAP
+
+maap_client = MAAP()
+maap_client.secrets.add_secret(
+    "OFFLINE_TOKEN", 
+    "INSERT YOUR LONG-TERM ESA TOKEN HERE"
+)
+```
+
+For instructions on obtaining a long-term token, see the [MAAP Docs](https://docs.maap-project.org/en/latest/science/ESA_BIOMASS/ESA_BIOMASS_Data_Access.html#Getting-the-ESA-MAAP-Long-Lasting-Token)
+
 ## Runtime layout
 
 - `environment.yml` is the canonical dependency manifest.
