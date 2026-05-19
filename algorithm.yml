@@ -1,37 +1,39 @@
 algorithm_name: esa_biomass_dps
-algorithm_version: main
-
-algorithm_description: "MAAP OGC Application Package that searches ESA BIOMASS Level 1B data, retrieves GeoTIFF assets, loads the selected area through STAC/ODC, forward-fills the latest available time slice, and writes the result as a Cloud Optimized GeoTIFF."
-
-docker_container_url: esa-biomass-dps:latest
-repository_url: https://github.com/MAAP-Project/esa-biomass-dps
-
-run_command: "/app/ESA_BIOMASS_DPS_JOB/run.sh"
-
+algorithm_version: cleanup
+algorithm_description: MAAP OGC Application Package that queries ESA BIOMASS
+  Level 1B data within a user-defined bounding box and time range, retrieves
+  GeoTIFF assets, loads the selected area through STAC/ODC, forward-fills the
+  latest available time slice, and writes the result as a Cloud Optimized
+  GeoTIFF (COG).
+code_repository: https://github.com/MAAP-Project/esa-biomass-dps
+run_command: esa-biomass-dps/run.sh
+build_command: esa-biomass-dps/build.sh
+ram_min: 8
+cores_min: 4
+base_container_url: mas.dit.maap-project.org/root/maap-workspaces/custom_images/maap_base:develop
 inputs:
-  bbox:
-    title: Bounding box
-    description: "Bounding box in WGS84 as min_lon,min_lat,max_lon,max_lat"
+  - name: bbox
+    label: Bounding box
+    doc: Comma-separated bounding box coordinates as min_x,min_y,max_x,max_y
+      in the CRS supplied by `crs`
     type: string
-    default: "55,64,61,67"
-  crs:
-    title: Coordinate Reference System
-    description: "CRS of the output raster"
+  - name: crs
+    label: CRS
+    doc: Coordinate reference system for the bounding box and output raster,
+      for example `EPSG:4326`
     type: string
-    default: "EPSG:4326"
-  datetime:
-    title: Datetime range
-    description: "Datetime range"
+  - name: datetime
+    label: Datetime range
+    doc: Datetime range for the ESA BIOMASS STAC query, formatted as an ISO
+      8601 interval such as
+      `2026-01-01T00:00:00Z/2026-01-31T23:59:59Z`
     type: string
-    default: "2026-01-01/2026-02-02"
-  resolution:
-    title: Output resolution
-    description: "Output resolution"
-    type: string
-    default: "0.01"
-
+  - name: resolution
+    label: Output resolution
+    doc: Output resolution in CRS units
+    type: double
+    default: 0.01
 outputs:
-  output:
-    title: Output folder
-    description: "Folder containing the generated ESA BIOMASS Cloud Optimized GeoTIFF"
-    type: directory
+  - name: out
+    type: Directory
+outdir_max: 20
