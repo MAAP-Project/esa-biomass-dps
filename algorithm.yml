@@ -14,19 +14,18 @@ base_container_url: mas.dit.maap-project.org/root/maap-workspaces/custom_images/
 inputs:
   - name: bbox
     label: Bounding box
-    doc: Comma-separated bounding box coordinates as min_x,min_y,max_x,max_y
-      in the CRS supplied by `crs`
+    doc: Comma-separated bounding box coordinates as min_x,min_y,max_x,max_y in the
+      CRS supplied by `crs`
     type: string
   - name: crs
     label: CRS
-    doc: Coordinate reference system for the bounding box and output raster,
-      for example `EPSG:4326`
+    doc: Coordinate reference system for the bounding box and output raster, for
+      example `EPSG:4326`
     type: string
   - name: datetime
     label: Datetime range
-    doc: Datetime range for the ESA BIOMASS STAC query, formatted as an ISO
-      8601 interval such as
-      `2026-01-01T00:00:00Z/2026-01-31T23:59:59Z`
+    doc: Datetime range for the ESA BIOMASS STAC query, formatted as an ISO 8601
+      interval such as `2026-01-01T00:00:00Z/2026-01-31T23:59:59Z`
     type: string
   - name: resolution
     label: Output resolution
