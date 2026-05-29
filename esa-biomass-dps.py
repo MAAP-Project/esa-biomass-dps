@@ -88,7 +88,7 @@ search = client.search(
     collections=["BiomassLevel1b"],
     bbox=bbox_4326,
     datetime=datetime,
-    filter="productType='S2_DGM__1S'",
+    filter="(productType='S2_DGM__1S' OR productType='S1_DGM__1S' OR productType='S3_DGM__1S')",
     method="GET"
 )
 items = search.item_collection()
